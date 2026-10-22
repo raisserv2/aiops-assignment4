@@ -1,0 +1,25 @@
+# Prometheus scrape config for the captioning app + node_exporter.
+# All targets run on this machine, so they are reached on localhost.
+global:
+  scrape_interval: 5s        # matches the 5 s dashboard refresh
+  evaluation_interval: 5s
+
+scrape_configs:
+  # Prometheus monitoring itself
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # The Streamlit captioning app (prometheus_client HTTP server on its own port)
+  - job_name: "caption-app"
+    static_configs:
+      - targets: ["localhost:8000"]
+        labels:
+          service: "image-captioning"
+
+  # Host-level CPU / RAM / disk / network from node_exporter
+  - job_name: "node"
+    static_configs:
+      - targets: ["localhost:9100"]
+        labels:
+          service: "host"

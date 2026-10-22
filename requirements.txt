@@ -1,0 +1,8 @@
+streamlit==1.65.0
+prometheus_client==0.26.0
+pillow==12.3.0
+pandas
+requests
+transformers>=4.44,<5
+# torch: install the CPU-only build separately (see README):
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
