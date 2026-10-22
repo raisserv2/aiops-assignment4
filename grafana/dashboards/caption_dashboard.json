@@ -1,100 +1,68 @@
 {
-  "uid": "caption-a4",
-  "title": "CPU Image Captioning: Service Health to Hardware",
-  "description": "A4 observability dashboard: Streamlit BLIP captioning app + node_exporter.",
-  "tags": [
-    "A4",
-    "streamlit",
-    "prometheus",
-    "node_exporter"
-  ],
-  "timezone": "browser",
-  "editable": true,
-  "graphTooltip": 1,
-  "refresh": "5s",
-  "time": {
-    "from": "now-15m",
-    "to": "now"
-  },
-  "timepicker": {
-    "refresh_intervals": [
-      "5s",
-      "10s",
-      "30s",
-      "1m",
-      "5m"
-    ]
-  },
-  "schemaVersion": 39,
-  "version": 1,
-  "templating": {
-    "list": [
-      {
-        "name": "datasource",
-        "label": "Data source",
-        "type": "datasource",
-        "query": "prometheus",
-        "current": {
-          "text": "Prometheus",
-          "value": "prometheus"
-        },
-        "hide": 0
-      },
-      {
-        "name": "mode",
-        "label": "Mode",
-        "type": "custom",
-        "query": "single,bulk",
-        "multi": true,
-        "includeAll": true,
-        "allValue": ".*",
-        "current": {
-          "text": "All",
-          "value": "$__all"
-        },
-        "options": [],
-        "hide": 0
-      }
-    ]
-  },
   "annotations": {
     "list": [
       {
-        "name": "Bulk jobs running",
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      },
+      {
         "datasource": {
           "type": "prometheus",
           "uid": "${datasource}"
         },
         "enable": true,
-        "iconColor": "#eb6834",
         "expr": "caption_bulk_queue_remaining > 0",
+        "hide": false,
+        "iconColor": "#eb6834",
+        "name": "Bulk jobs running",
         "step": "5s",
-        "titleFormat": "Bulk ZIP job running",
         "textFormat": "{{value}} images left",
+        "titleFormat": "Bulk ZIP job running",
         "useValueForTime": false
       }
     ]
   },
+  "description": "A4 observability dashboard: Streamlit BLIP captioning app + node_exporter.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": 2,
+  "links": [],
   "panels": [
     {
-      "type": "text",
-      "id": 1,
-      "title": "How to read this dashboard",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
       "gridPos": {
         "h": 4,
         "w": 24,
         "x": 0,
         "y": 0
       },
+      "id": 1,
       "options": {
-        "mode": "markdown",
-        "content": "**CPU image-captioning service.** Read top to bottom: **1 Health** (is it up?) → **2 Traffic** (how much work?) → **3 Latency** (how fast?) → **4 Workload** (what is the app doing internally?) → **5 System** (what does it cost the machine?).  \nColours are colour-blind safe and fixed: **blue = single-image mode / healthy**, **orange = bulk (ZIP) mode**, red only for problems (always with text). Shaded regions on time-series panels mark **running bulk jobs**, so app spikes can be matched to CPU/RAM spikes in section 5. Hover the ⓘ on any panel for what it shows. All panels refresh every 5 s."
-      }
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "**CPU image-captioning service.** Read top to bottom: **1 Health** (is it up?) → **2 Traffic** (how much work?) → **3 Latency** (how fast?) → **4 Workload** (what is the app doing internally?) → **5 System** (what does it cost the machine?).  \nColours are colour-blind safe and fixed: **blue = single-image mode / healthy**, **orange = bulk (ZIP) mode**, red only for problems (always with text). Shaded regions on time-series panels mark **running bulk jobs**, so app spikes can be matched to CPU/RAM spikes in section 5. Hover the ⓘ on any panel for what it shows. All panels refresh every 5 s.",
+        "mode": "markdown"
+      },
+      "pluginVersion": "11.6.0",
+      "title": "How to read this dashboard",
+      "type": "text"
     },
     {
-      "type": "row",
-      "id": 2,
-      "title": "1 · Health: is everything up?",
       "collapsed": false,
       "gridPos": {
         "h": 1,
@@ -102,16 +70,62 @@
         "x": 0,
         "y": 4
       },
-      "panels": []
+      "id": 2,
+      "panels": [],
+      "title": "1 · Health: is everything up?",
+      "type": "row"
     },
     {
-      "type": "stat",
-      "id": 3,
-      "title": "Caption app",
-      "description": "Is Prometheus able to scrape the app's /metrics endpoint (port 8000)? UP = app process alive.",
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
+      },
+      "description": "Is Prometheus able to scrape the app's /metrics endpoint (port 8000)? UP = app process alive.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "#e34948",
+                  "text": "DOWN ✖"
+                },
+                "1": {
+                  "color": "#2a78d6",
+                  "text": "UP ✔"
+                }
+              },
+              "type": "value"
+            },
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "color": "#8e8e8e",
+                  "text": "NO DATA"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#e34948"
+              },
+              {
+                "color": "#2a78d6",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 4,
@@ -119,6 +133,25 @@
         "x": 0,
         "y": 5
       },
+      "id": 3,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -126,47 +159,57 @@
             "uid": "${datasource}"
           },
           "expr": "up{job=\"caption-app\"}",
-          "legendFormat": "",
-          "refId": "A",
           "format": "time_series",
           "instant": true,
-          "range": false
+          "legendFormat": "",
+          "range": false,
+          "refId": "A"
         }
       ],
+      "title": "Caption app",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Is the host metrics exporter (port 9100) reachable? Needed for section 5.",
       "fieldConfig": {
         "defaults": {
-          "unit": "none",
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [
             {
-              "type": "value",
               "options": {
                 "0": {
-                  "text": "DOWN ✖",
-                  "color": "#e34948"
+                  "color": "#e34948",
+                  "text": "DOWN ✖"
                 },
                 "1": {
-                  "text": "UP ✔",
-                  "color": "#2a78d6"
+                  "color": "#2a78d6",
+                  "text": "UP ✔"
                 }
-              }
+              },
+              "type": "value"
             },
             {
-              "type": "special",
               "options": {
                 "match": "null",
                 "result": {
-                  "text": "NO DATA",
-                  "color": "#8e8e8e"
+                  "color": "#8e8e8e",
+                  "text": "NO DATA"
                 }
-              }
+              },
+              "type": "special"
             }
           ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "#e34948",
-                "value": null
+                "color": "#e34948"
               },
               {
                 "color": "#2a78d6",
@@ -174,35 +217,9 @@
               }
             ]
           },
-          "color": {
-            "mode": "thresholds"
-          }
+          "unit": "none"
         },
         "overrides": []
-      },
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "colorMode": "background",
-        "graphMode": "none",
-        "textMode": "value_and_name",
-        "justifyMode": "center",
-        "orientation": "auto"
-      }
-    },
-    {
-      "type": "stat",
-      "id": 4,
-      "title": "node_exporter",
-      "description": "Is the host metrics exporter (port 9100) reachable? Needed for section 5.",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
       },
       "gridPos": {
         "h": 4,
@@ -210,6 +227,25 @@
         "x": 4,
         "y": 5
       },
+      "id": 4,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -217,47 +253,47 @@
             "uid": "${datasource}"
           },
           "expr": "up{job=\"node\"}",
-          "legendFormat": "",
-          "refId": "A",
           "format": "time_series",
           "instant": true,
-          "range": false
+          "legendFormat": "",
+          "range": false,
+          "refId": "A"
         }
       ],
+      "title": "node_exporter",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "1 when the captioning model has finished loading into memory and can serve requests.",
       "fieldConfig": {
         "defaults": {
-          "unit": "none",
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [
             {
-              "type": "value",
               "options": {
                 "0": {
-                  "text": "DOWN ✖",
-                  "color": "#e34948"
+                  "color": "#e34948",
+                  "text": "LOADING"
                 },
                 "1": {
-                  "text": "UP ✔",
-                  "color": "#2a78d6"
+                  "color": "#2a78d6",
+                  "text": "READY ✔"
                 }
-              }
-            },
-            {
-              "type": "special",
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "NO DATA",
-                  "color": "#8e8e8e"
-                }
-              }
+              },
+              "type": "value"
             }
           ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "#e34948",
-                "value": null
+                "color": "#e34948"
               },
               {
                 "color": "#2a78d6",
@@ -265,35 +301,9 @@
               }
             ]
           },
-          "color": {
-            "mode": "thresholds"
-          }
+          "unit": "none"
         },
         "overrides": []
-      },
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "colorMode": "background",
-        "graphMode": "none",
-        "textMode": "value_and_name",
-        "justifyMode": "center",
-        "orientation": "auto"
-      }
-    },
-    {
-      "type": "stat",
-      "id": 5,
-      "title": "Model loaded",
-      "description": "1 when the captioning model has finished loading into memory and can serve requests.",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
       },
       "gridPos": {
         "h": 4,
@@ -301,6 +311,25 @@
         "x": 8,
         "y": 5
       },
+      "id": 5,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -308,73 +337,39 @@
             "uid": "${datasource}"
           },
           "expr": "caption_model_loaded",
-          "legendFormat": "",
-          "refId": "A",
           "format": "time_series",
           "instant": true,
-          "range": false
+          "legendFormat": "",
+          "range": false,
+          "refId": "A"
         }
       ],
+      "title": "Model loaded",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Time since the Streamlit app process started.",
       "fieldConfig": {
         "defaults": {
-          "unit": "none",
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": {
-                  "text": "LOADING",
-                  "color": "#e34948"
-                },
-                "1": {
-                  "text": "READY ✔",
-                  "color": "#2a78d6"
-                }
-              }
-            }
-          ],
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "#e34948",
-                "value": null
-              },
-              {
-                "color": "#2a78d6",
-                "value": 1
+                "color": "#2a78d6"
               }
             ]
           },
-          "color": {
-            "mode": "thresholds"
-          }
+          "unit": "s"
         },
         "overrides": []
-      },
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "colorMode": "background",
-        "graphMode": "none",
-        "textMode": "value_and_name",
-        "justifyMode": "center",
-        "orientation": "auto"
-      }
-    },
-    {
-      "type": "stat",
-      "id": 6,
-      "title": "App uptime",
-      "description": "Time since the Streamlit app process started.",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
       },
       "gridPos": {
         "h": 4,
@@ -382,6 +377,25 @@
         "x": 12,
         "y": 5
       },
+      "id": 6,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -389,55 +403,39 @@
             "uid": "${datasource}"
           },
           "expr": "time() - caption_app_start_timestamp_seconds",
-          "legendFormat": "",
-          "refId": "A",
           "format": "time_series",
           "instant": true,
-          "range": false
+          "legendFormat": "",
+          "range": false,
+          "refId": "A"
         }
       ],
+      "title": "App uptime",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Distinct browser sessions that interacted with the app in the last 5 minutes.",
       "fieldConfig": {
         "defaults": {
-          "unit": "s",
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "#2a78d6",
-                "value": null
+                "color": "#2a78d6"
               }
             ]
           },
-          "color": {
-            "mode": "thresholds"
-          }
+          "unit": "short"
         },
         "overrides": []
-      },
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "colorMode": "none",
-        "graphMode": "none",
-        "textMode": "value_and_name",
-        "justifyMode": "center",
-        "orientation": "auto"
-      }
-    },
-    {
-      "type": "stat",
-      "id": 7,
-      "title": "Active sessions (5 min)",
-      "description": "Distinct browser sessions that interacted with the app in the last 5 minutes.",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
       },
       "gridPos": {
         "h": 4,
@@ -445,6 +443,25 @@
         "x": 16,
         "y": 5
       },
+      "id": 7,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -452,86 +469,36 @@
             "uid": "${datasource}"
           },
           "expr": "caption_active_sessions",
-          "legendFormat": "",
-          "refId": "A",
           "format": "time_series",
           "instant": true,
-          "range": false
+          "legendFormat": "",
+          "range": false,
+          "refId": "A"
         }
       ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "short",
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "#2a78d6",
-                "value": null
-              }
-            ]
-          },
-          "color": {
-            "mode": "thresholds"
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "colorMode": "none",
-        "graphMode": "none",
-        "textMode": "value_and_name",
-        "justifyMode": "center",
-        "orientation": "auto"
-      }
+      "title": "Active sessions (5 min)",
+      "type": "stat"
     },
     {
-      "type": "stat",
-      "id": 8,
-      "title": "Image error rate (5 min)",
-      "description": "Share of images that failed (unreadable file, model error) over the last 5 minutes. Red above 5 %.",
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 20,
-        "y": 5
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "expr": "100 * sum(rate(caption_images_processed_total{status=\"error\"}[5m])) / clamp_min(sum(rate(caption_images_processed_total[5m])), 1e-9) or vector(0)",
-          "legendFormat": "",
-          "refId": "A",
-          "format": "time_series",
-          "instant": true,
-          "range": false
-        }
-      ],
+      "description": "Share of images that failed (unreadable file, model error) over the last 5 minutes. Red above 5 %.",
       "fieldConfig": {
         "defaults": {
-          "unit": "percent",
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1,
           "mappings": [],
+          "max": 100,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "#2a78d6",
-                "value": null
+                "color": "#2a78d6"
               },
               {
                 "color": "#e34948",
@@ -539,14 +506,23 @@
               }
             ]
           },
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 1
+          "unit": "percent"
         },
         "overrides": []
       },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 5
+      },
+      "id": 8,
       "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -554,17 +530,29 @@
           "fields": "",
           "values": false
         },
-        "colorMode": "background",
-        "graphMode": "none",
+        "showPercentChange": false,
         "textMode": "value_and_name",
-        "justifyMode": "center",
-        "orientation": "auto"
-      }
+        "wideLayout": true
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "100 * sum(rate(caption_images_processed_total{status=\"error\"}[5m])) / clamp_min(sum(rate(caption_images_processed_total[5m])), 1e-9) or vector(0)",
+          "format": "time_series",
+          "instant": true,
+          "legendFormat": "",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Image error rate (5 min)",
+      "type": "stat"
     },
     {
-      "type": "row",
-      "id": 9,
-      "title": "2 · Traffic: how much work is arriving?",
       "collapsed": false,
       "gridPos": {
         "h": 1,
@@ -572,63 +560,74 @@
         "x": 0,
         "y": 9
       },
-      "panels": []
+      "id": 9,
+      "panels": [],
+      "title": "2 · Traffic: how much work is arriving?",
+      "type": "row"
     },
     {
-      "type": "timeseries",
-      "id": 10,
-      "title": "Requests per minute, by mode (linear)",
-      "description": "How many caption requests users start. A bulk request is one whole ZIP. Spikes = users uploading.",
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 10
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "expr": "sum by (mode) (rate(caption_requests_total{mode=~\"$mode\"}[1m])) * 60",
-          "legendFormat": "{{mode}}",
-          "refId": "A",
-          "format": "time_series"
-        }
-      ],
+      "description": "How many caption requests users start. A bulk request is one whole ZIP. Spikes = users uploading.",
       "fieldConfig": {
         "defaults": {
-          "unit": "short",
+          "color": {
+            "fixedColor": "#2a78d6",
+            "mode": "fixed"
+          },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "requests / minute",
             "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "lineWidth": 2,
             "fillOpacity": 0,
-            "showPoints": "always",
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
             "pointSize": 4,
-            "spanNulls": true,
             "scaleDistribution": {
               "type": "linear"
             },
+            "showPoints": "always",
+            "spanNulls": true,
             "stacking": {
-              "mode": "none",
-              "group": "A"
+              "group": "A",
+              "mode": "none"
             },
-            "lineStyle": {
-              "fill": "solid"
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#2a78d6"
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
           },
-          "min": 0
+          "unit": "short"
         },
         "overrides": [
           {
@@ -640,8 +639,8 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#2a78d6"
+                  "fixedColor": "#2a78d6",
+                  "mode": "fixed"
                 }
               }
             ]
@@ -655,96 +654,127 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#eb6834"
+                  "fixedColor": "#eb6834",
+                  "mode": "fixed"
                 }
               },
               {
                 "id": "custom.lineStyle",
                 "value": {
-                  "fill": "dash",
                   "dash": [
                     10,
                     10
-                  ]
+                  ],
+                  "fill": "dash"
                 }
               }
             ]
           }
         ]
       },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 10
+      },
+      "id": 10,
       "options": {
         "legend": {
-          "showLegend": true,
-          "displayMode": "table",
-          "placement": "bottom",
           "calcs": [
             "mean",
             "max",
             "lastNotNull"
-          ]
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
-      }
-    },
-    {
-      "type": "timeseries",
-      "id": 11,
-      "title": "Images captioned per second, by outcome (linear)",
-      "description": "Model throughput. 'success' should track uploads; any 'error' line means files were rejected or failed.",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 10
-      },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "sum by (status) (rate(caption_images_processed_total[1m]))",
-          "legendFormat": "{{status}}",
-          "refId": "A",
-          "format": "time_series"
+          "expr": "sum by (mode) (rate(caption_requests_total{mode=~\"$mode\"}[1m])) * 60",
+          "format": "time_series",
+          "legendFormat": "{{mode}}",
+          "refId": "A"
         }
       ],
+      "title": "Requests per minute, by mode (linear)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Model throughput. 'success' should track uploads; any 'error' line means files were rejected or failed.",
       "fieldConfig": {
         "defaults": {
-          "unit": "short",
+          "color": {
+            "fixedColor": "#2a78d6",
+            "mode": "fixed"
+          },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "images / second",
             "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "lineWidth": 2,
             "fillOpacity": 0,
-            "showPoints": "always",
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
             "pointSize": 4,
-            "spanNulls": true,
             "scaleDistribution": {
               "type": "linear"
             },
+            "showPoints": "always",
+            "spanNulls": true,
             "stacking": {
-              "mode": "none",
-              "group": "A"
+              "group": "A",
+              "mode": "none"
             },
-            "lineStyle": {
-              "fill": "solid"
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#2a78d6"
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
           },
-          "min": 0
+          "unit": "short"
         },
         "overrides": [
           {
@@ -756,8 +786,8 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#2a78d6"
+                  "fixedColor": "#2a78d6",
+                  "mode": "fixed"
                 }
               }
             ]
@@ -771,96 +801,127 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#e34948"
+                  "fixedColor": "#e34948",
+                  "mode": "fixed"
                 }
               },
               {
                 "id": "custom.lineStyle",
                 "value": {
-                  "fill": "dash",
                   "dash": [
                     10,
                     10
-                  ]
+                  ],
+                  "fill": "dash"
                 }
               }
             ]
           }
         ]
       },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 10
+      },
+      "id": 11,
       "options": {
         "legend": {
-          "showLegend": true,
-          "displayMode": "table",
-          "placement": "bottom",
           "calcs": [
             "mean",
             "max",
             "lastNotNull"
-          ]
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
-      }
-    },
-    {
-      "type": "timeseries",
-      "id": 12,
-      "title": "Errors by type, per minute (linear)",
-      "description": "What is going wrong: invalid_image, unsupported_file, zip_corrupt, zip_too_large, inference_error...",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 18
-      },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "sum by (error_type) (rate(caption_errors_total[1m])) * 60",
-          "legendFormat": "{{error_type}}",
-          "refId": "A",
-          "format": "time_series"
+          "expr": "sum by (status) (rate(caption_images_processed_total[1m]))",
+          "format": "time_series",
+          "legendFormat": "{{status}}",
+          "refId": "A"
         }
       ],
+      "title": "Images captioned per second, by outcome (linear)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "What is going wrong: invalid_image, unsupported_file, zip_corrupt, zip_too_large, inference_error...",
       "fieldConfig": {
         "defaults": {
-          "unit": "short",
+          "color": {
+            "fixedColor": "#2a78d6",
+            "mode": "fixed"
+          },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "errors / minute",
             "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "lineWidth": 2,
             "fillOpacity": 0,
-            "showPoints": "always",
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
             "pointSize": 4,
-            "spanNulls": true,
             "scaleDistribution": {
               "type": "linear"
             },
+            "showPoints": "always",
+            "spanNulls": true,
             "stacking": {
-              "mode": "none",
-              "group": "A"
+              "group": "A",
+              "mode": "none"
             },
-            "lineStyle": {
-              "fill": "solid"
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#2a78d6"
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
           },
-          "min": 0
+          "unit": "short"
         },
         "overrides": [
           {
@@ -872,8 +933,8 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#e34948"
+                  "fixedColor": "#e34948",
+                  "mode": "fixed"
                 }
               }
             ]
@@ -887,18 +948,18 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#eda100"
+                  "fixedColor": "#eda100",
+                  "mode": "fixed"
                 }
               },
               {
                 "id": "custom.lineStyle",
                 "value": {
-                  "fill": "dash",
                   "dash": [
                     10,
                     10
-                  ]
+                  ],
+                  "fill": "dash"
                 }
               }
             ]
@@ -912,18 +973,18 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#e87ba4"
+                  "fixedColor": "#e87ba4",
+                  "mode": "fixed"
                 }
               },
               {
                 "id": "custom.lineStyle",
                 "value": {
-                  "fill": "dash",
                   "dash": [
                     4,
                     4
-                  ]
+                  ],
+                  "fill": "dash"
                 }
               }
             ]
@@ -937,72 +998,92 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#4a3aa7"
+                  "fixedColor": "#4a3aa7",
+                  "mode": "fixed"
                 }
               },
               {
                 "id": "custom.lineStyle",
                 "value": {
-                  "fill": "dash",
                   "dash": [
                     2,
                     6
-                  ]
+                  ],
+                  "fill": "dash"
                 }
               }
             ]
           }
         ]
       },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 18
+      },
+      "id": 12,
       "options": {
         "legend": {
-          "showLegend": true,
-          "displayMode": "table",
-          "placement": "bottom",
           "calcs": [
             "mean",
             "max",
             "lastNotNull"
-          ]
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
-      }
-    },
-    {
-      "type": "table",
-      "id": 13,
-      "title": "Requests by client (session · IP · browser)",
-      "description": "Who is using the app. Each row is one browser session, from the custom labels on caption_client_requests_total.",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 18
-      },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "sum by (session_id, client_ip, browser, mode) (caption_client_requests_total)",
-          "legendFormat": "",
-          "refId": "A",
-          "format": "table",
-          "instant": true,
-          "range": false
+          "expr": "sum by (error_type) (rate(caption_errors_total[1m])) * 60",
+          "format": "time_series",
+          "legendFormat": "{{error_type}}",
+          "refId": "A"
         }
       ],
+      "title": "Errors by type, per minute (linear)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Who is using the app. Each row is one browser session, from the custom labels on caption_client_requests_total.",
       "fieldConfig": {
         "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
           "unit": "short"
         },
         "overrides": [
@@ -1020,15 +1101,47 @@
           }
         ]
       },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 18
+      },
+      "id": 13,
       "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
         "showHeader": true,
         "sortBy": [
           {
-            "displayName": "requests",
-            "desc": true
+            "desc": true,
+            "displayName": "requests"
           }
         ]
       },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (session_id, client_ip, browser, mode) (caption_client_requests_total)",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Requests by client (session · IP · browser)",
       "transformations": [
         {
           "id": "organize",
@@ -1038,12 +1151,10 @@
             }
           }
         }
-      ]
+      ],
+      "type": "table"
     },
     {
-      "type": "row",
-      "id": 14,
-      "title": "3 · Latency: how fast is each caption?",
       "collapsed": false,
       "gridPos": {
         "h": 1,
@@ -1051,83 +1162,74 @@
         "x": 0,
         "y": 26
       },
-      "panels": []
+      "id": 14,
+      "panels": [],
+      "title": "3 · Latency: how fast is each caption?",
+      "type": "row"
     },
     {
-      "type": "timeseries",
-      "id": 15,
-      "title": "Model inference time per image: p50 / p95 / p99 (seconds, linear)",
-      "description": "From the caption_inference_seconds histogram. p95 = 95 % of images finish faster than this line. A rising p99 with flat p50 means occasional slow images.",
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 27
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "expr": "histogram_quantile(0.5, sum by (le) (rate(caption_inference_seconds_bucket{mode=~\"$mode\"}[1m])))",
-          "legendFormat": "p50",
-          "refId": "A",
-          "format": "time_series"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "expr": "histogram_quantile(0.95, sum by (le) (rate(caption_inference_seconds_bucket{mode=~\"$mode\"}[1m])))",
-          "legendFormat": "p95",
-          "refId": "B",
-          "format": "time_series"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "expr": "histogram_quantile(0.99, sum by (le) (rate(caption_inference_seconds_bucket{mode=~\"$mode\"}[1m])))",
-          "legendFormat": "p99",
-          "refId": "C",
-          "format": "time_series"
-        }
-      ],
+      "description": "From the caption_inference_seconds histogram. p95 = 95 % of images finish faster than this line. A rising p99 with flat p50 means occasional slow images.",
       "fieldConfig": {
         "defaults": {
-          "unit": "s",
+          "color": {
+            "fixedColor": "#2a78d6",
+            "mode": "fixed"
+          },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "seconds per image",
             "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "lineWidth": 2,
             "fillOpacity": 0,
-            "showPoints": "always",
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
             "pointSize": 4,
-            "spanNulls": true,
             "scaleDistribution": {
               "type": "linear"
             },
+            "showPoints": "always",
+            "spanNulls": true,
             "stacking": {
-              "mode": "none",
-              "group": "A"
+              "group": "A",
+              "mode": "none"
             },
-            "lineStyle": {
-              "fill": "solid"
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#2a78d6"
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
           },
-          "min": 0
+          "unit": "s"
         },
         "overrides": [
           {
@@ -1139,8 +1241,8 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#2a78d6"
+                  "fixedColor": "#2a78d6",
+                  "mode": "fixed"
                 }
               }
             ]
@@ -1154,18 +1256,18 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#eb6834"
+                  "fixedColor": "#eb6834",
+                  "mode": "fixed"
                 }
               },
               {
                 "id": "custom.lineStyle",
                 "value": {
-                  "fill": "dash",
                   "dash": [
                     10,
                     10
-                  ]
+                  ],
+                  "fill": "dash"
                 }
               }
             ]
@@ -1179,96 +1281,147 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#e87ba4"
+                  "fixedColor": "#e87ba4",
+                  "mode": "fixed"
                 }
               },
               {
                 "id": "custom.lineStyle",
                 "value": {
-                  "fill": "dash",
                   "dash": [
                     2,
                     6
-                  ]
+                  ],
+                  "fill": "dash"
                 }
               }
             ]
           }
         ]
       },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 27
+      },
+      "id": 15,
       "options": {
         "legend": {
-          "showLegend": true,
-          "displayMode": "table",
-          "placement": "bottom",
           "calcs": [
             "mean",
             "max",
             "lastNotNull"
-          ]
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
-      }
-    },
-    {
-      "type": "timeseries",
-      "id": 16,
-      "title": "Average end-to-end request time, by mode (seconds, LOG scale)",
-      "description": "From the caption_request_duration_seconds summary (_sum / _count). Single = one image, bulk = a whole ZIP, so they differ by orders of magnitude, hence the log10 axis.",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 27
-      },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "sum by (mode) (rate(caption_request_duration_seconds_sum{mode=~\"$mode\"}[5m])) / sum by (mode) (rate(caption_request_duration_seconds_count{mode=~\"$mode\"}[5m]))",
-          "legendFormat": "{{mode}}",
-          "refId": "A",
-          "format": "time_series"
+          "expr": "histogram_quantile(0.5, sum by (le) (rate(caption_inference_seconds_bucket{mode=~\"$mode\"}[1m])))",
+          "format": "time_series",
+          "legendFormat": "p50",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(caption_inference_seconds_bucket{mode=~\"$mode\"}[1m])))",
+          "format": "time_series",
+          "legendFormat": "p95",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "histogram_quantile(0.99, sum by (le) (rate(caption_inference_seconds_bucket{mode=~\"$mode\"}[1m])))",
+          "format": "time_series",
+          "legendFormat": "p99",
+          "refId": "C"
         }
       ],
+      "title": "Model inference time per image: p50 / p95 / p99 (seconds, linear)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "From the caption_request_duration_seconds summary (_sum / _count). Single = one image, bulk = a whole ZIP, so they differ by orders of magnitude, hence the log10 axis.",
       "fieldConfig": {
         "defaults": {
-          "unit": "s",
+          "color": {
+            "fixedColor": "#2a78d6",
+            "mode": "fixed"
+          },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "seconds per request (log10)",
             "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "lineWidth": 2,
             "fillOpacity": 0,
-            "showPoints": "always",
-            "pointSize": 4,
-            "spanNulls": true,
-            "scaleDistribution": {
-              "type": "log",
-              "log": 10
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
             },
-            "stacking": {
-              "mode": "none",
-              "group": "A"
-            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
             "lineStyle": {
               "fill": "solid"
+            },
+            "lineWidth": 2,
+            "pointSize": 4,
+            "scaleDistribution": {
+              "log": 10,
+              "type": "log"
+            },
+            "showPoints": "always",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#2a78d6"
-          }
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
         },
         "overrides": [
           {
@@ -1280,8 +1433,8 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#2a78d6"
+                  "fixedColor": "#2a78d6",
+                  "mode": "fixed"
                 }
               }
             ]
@@ -1295,71 +1448,78 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#eb6834"
+                  "fixedColor": "#eb6834",
+                  "mode": "fixed"
                 }
               },
               {
                 "id": "custom.lineStyle",
                 "value": {
-                  "fill": "dash",
                   "dash": [
                     10,
                     10
-                  ]
+                  ],
+                  "fill": "dash"
                 }
               }
             ]
           }
         ]
       },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 27
+      },
+      "id": 16,
       "options": {
         "legend": {
-          "showLegend": true,
-          "displayMode": "table",
-          "placement": "bottom",
           "calcs": [
             "mean",
             "max",
             "lastNotNull"
-          ]
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
-      }
-    },
-    {
-      "type": "heatmap",
-      "id": 17,
-      "title": "Inference time distribution over time (seconds, bucketed)",
-      "description": "Each column is one minute; darker cells = more images finished in that latency bucket. Shows the whole distribution, not just percentiles.",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 35
-      },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "sum by (le) (increase(caption_inference_seconds_bucket{mode=~\"$mode\"}[1m]))",
-          "legendFormat": "{{le}}",
-          "refId": "A",
-          "format": "heatmap"
+          "expr": "sum by (mode) (rate(caption_request_duration_seconds_sum{mode=~\"$mode\"}[5m])) / sum by (mode) (rate(caption_request_duration_seconds_count{mode=~\"$mode\"}[5m]))",
+          "format": "time_series",
+          "legendFormat": "{{mode}}",
+          "refId": "A"
         }
       ],
+      "title": "Average end-to-end request time, by mode (seconds, LOG scale)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Each column is one minute; darker cells = more images finished in that latency bucket. Shows the whole distribution, not just percentiles.",
       "fieldConfig": {
         "defaults": {
           "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
             "scaleDistribution": {
               "type": "linear"
             }
@@ -1367,104 +1527,131 @@
         },
         "overrides": []
       },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 35
+      },
+      "id": 17,
       "options": {
         "calculate": false,
         "cellGap": 1,
+        "cellValues": {
+          "unit": "short"
+        },
         "color": {
-          "mode": "scheme",
-          "scheme": "Blues",
-          "fill": "#2a78d6",
-          "scale": "exponential",
           "exponent": 0.5,
-          "steps": 64,
-          "reverse": false
+          "fill": "#2a78d6",
+          "mode": "scheme",
+          "reverse": false,
+          "scale": "exponential",
+          "scheme": "Blues",
+          "steps": 64
         },
-        "yAxis": {
-          "axisLabel": "inference time bucket (s)",
-          "unit": "s",
-          "axisPlacement": "left"
+        "exemplars": {
+          "color": "rgba(255,0,255,0.7)"
         },
-        "rowsFrame": {
-          "layout": "auto"
+        "filterValues": {
+          "le": 1e-9
         },
         "legend": {
           "show": true
         },
+        "rowsFrame": {
+          "layout": "auto"
+        },
         "tooltip": {
           "mode": "single",
-          "yHistogram": true,
-          "showColorScale": true
+          "showColorScale": true,
+          "yHistogram": true
         },
-        "cellValues": {
-          "unit": "short"
+        "yAxis": {
+          "axisLabel": "inference time bucket (s)",
+          "axisPlacement": "left",
+          "reverse": false,
+          "unit": "s"
         }
-      }
-    },
-    {
-      "type": "timeseries",
-      "id": 18,
-      "title": "Waiting + preprocessing time per image, p95 (seconds, linear)",
-      "description": "Queue wait = time an image waited for the single CPU model slot (grows when users overlap). Preprocess = decode + resize. Both should stay far below inference time.",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 35
-      },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "histogram_quantile(0.95, sum by (le) (rate(caption_queue_wait_seconds_bucket{mode=~\"$mode\"}[1m])))",
-          "legendFormat": "queue wait p95",
-          "refId": "A",
-          "format": "time_series"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "expr": "histogram_quantile(0.95, sum by (le) (rate(caption_preprocess_seconds_bucket{mode=~\"$mode\"}[1m])))",
-          "legendFormat": "preprocess p95",
-          "refId": "B",
-          "format": "time_series"
+          "expr": "sum by (le) (increase(caption_inference_seconds_bucket{mode=~\"$mode\"}[1m]))",
+          "format": "heatmap",
+          "legendFormat": "{{le}}",
+          "refId": "A"
         }
       ],
+      "title": "Inference time distribution over time (seconds, bucketed)",
+      "type": "heatmap"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Queue wait = time an image waited for the single CPU model slot (grows when users overlap). Preprocess = decode + resize. Both should stay far below inference time.",
       "fieldConfig": {
         "defaults": {
-          "unit": "s",
+          "color": {
+            "fixedColor": "#2a78d6",
+            "mode": "fixed"
+          },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "seconds per image",
             "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "lineWidth": 2,
             "fillOpacity": 0,
-            "showPoints": "always",
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
             "pointSize": 4,
-            "spanNulls": true,
             "scaleDistribution": {
               "type": "linear"
             },
+            "showPoints": "always",
+            "spanNulls": true,
             "stacking": {
-              "mode": "none",
-              "group": "A"
+              "group": "A",
+              "mode": "none"
             },
-            "lineStyle": {
-              "fill": "solid"
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#2a78d6"
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
           },
-          "min": 0
+          "unit": "s"
         },
         "overrides": [
           {
@@ -1476,18 +1663,18 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#eb6834"
+                  "fixedColor": "#eb6834",
+                  "mode": "fixed"
                 }
               },
               {
                 "id": "custom.lineStyle",
                 "value": {
-                  "fill": "dash",
                   "dash": [
                     10,
                     10
-                  ]
+                  ],
+                  "fill": "dash"
                 }
               }
             ]
@@ -1501,35 +1688,65 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#1baf7a"
+                  "fixedColor": "#1baf7a",
+                  "mode": "fixed"
                 }
               }
             ]
           }
         ]
       },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 35
+      },
+      "id": 18,
       "options": {
         "legend": {
-          "showLegend": true,
-          "displayMode": "table",
-          "placement": "bottom",
           "calcs": [
             "mean",
             "max",
             "lastNotNull"
-          ]
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
-      }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(caption_queue_wait_seconds_bucket{mode=~\"$mode\"}[1m])))",
+          "format": "time_series",
+          "legendFormat": "queue wait p95",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(caption_preprocess_seconds_bucket{mode=~\"$mode\"}[1m])))",
+          "format": "time_series",
+          "legendFormat": "preprocess p95",
+          "refId": "B"
+        }
+      ],
+      "title": "Waiting + preprocessing time per image, p95 (seconds, linear)",
+      "type": "timeseries"
     },
     {
-      "type": "row",
-      "id": 19,
-      "title": "4 · Workload: what is the app doing right now?",
       "collapsed": false,
       "gridPos": {
         "h": 1,
@@ -1537,84 +1754,75 @@
         "x": 0,
         "y": 43
       },
-      "panels": []
+      "id": 19,
+      "panels": [],
+      "title": "4 · Workload: what is the app doing right now?",
+      "type": "row"
     },
     {
-      "type": "timeseries",
-      "id": 20,
-      "title": "Bulk queue and in-flight requests (count, linear)",
-      "description": "Images still waiting in running ZIP jobs, plus requests currently being processed. Use this panel to line up bulk uploads with the CPU / RAM panels directly below in section 5.",
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 44
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "expr": "caption_bulk_queue_remaining",
-          "legendFormat": "bulk images queued",
-          "refId": "A",
-          "format": "time_series"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "expr": "sum by (mode) (caption_active_requests{mode=~\"$mode\"})",
-          "legendFormat": "in-flight {{mode}}",
-          "refId": "B",
-          "format": "time_series"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "expr": "caption_inference_waiting",
-          "legendFormat": "waiting for model",
-          "refId": "C",
-          "format": "time_series"
-        }
-      ],
+      "description": "Images still waiting in running ZIP jobs, plus requests currently being processed. Use this panel to line up bulk uploads with the CPU / RAM panels directly below in section 5.",
       "fieldConfig": {
         "defaults": {
-          "unit": "short",
+          "color": {
+            "fixedColor": "#2a78d6",
+            "mode": "fixed"
+          },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "count",
             "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "lineWidth": 2,
             "fillOpacity": 0,
-            "showPoints": "always",
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
             "pointSize": 4,
-            "spanNulls": true,
             "scaleDistribution": {
               "type": "linear"
             },
+            "showPoints": "always",
+            "spanNulls": true,
             "stacking": {
-              "mode": "none",
-              "group": "A"
+              "group": "A",
+              "mode": "none"
             },
-            "lineStyle": {
-              "fill": "solid"
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#2a78d6"
-          },
+          "decimals": 0,
+          "mappings": [],
           "min": 0,
-          "decimals": 0
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": [
           {
@@ -1626,8 +1834,8 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#eb6834"
+                  "fixedColor": "#eb6834",
+                  "mode": "fixed"
                 }
               }
             ]
@@ -1641,18 +1849,18 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#2a78d6"
+                  "fixedColor": "#2a78d6",
+                  "mode": "fixed"
                 }
               },
               {
                 "id": "custom.lineStyle",
                 "value": {
-                  "fill": "dash",
                   "dash": [
                     10,
                     10
-                  ]
+                  ],
+                  "fill": "dash"
                 }
               }
             ]
@@ -1666,18 +1874,18 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#e87ba4"
+                  "fixedColor": "#e87ba4",
+                  "mode": "fixed"
                 }
               },
               {
                 "id": "custom.lineStyle",
                 "value": {
-                  "fill": "dash",
                   "dash": [
                     4,
                     4
-                  ]
+                  ],
+                  "fill": "dash"
                 }
               }
             ]
@@ -1691,96 +1899,147 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#4a3aa7"
+                  "fixedColor": "#4a3aa7",
+                  "mode": "fixed"
                 }
               },
               {
                 "id": "custom.lineStyle",
                 "value": {
-                  "fill": "dash",
                   "dash": [
                     2,
                     6
-                  ]
+                  ],
+                  "fill": "dash"
                 }
               }
             ]
           }
         ]
       },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 44
+      },
+      "id": 20,
       "options": {
         "legend": {
-          "showLegend": true,
-          "displayMode": "table",
-          "placement": "bottom",
           "calcs": [
             "mean",
             "max",
             "lastNotNull"
-          ]
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
-      }
-    },
-    {
-      "type": "timeseries",
-      "id": 21,
-      "title": "Upload volume, by mode (bytes per second, linear)",
-      "description": "How much data users push into the app. Large ZIPs show up as tall orange spikes.",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 44
-      },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "sum by (mode) (rate(caption_upload_bytes_total{mode=~\"$mode\"}[1m]))",
-          "legendFormat": "{{mode}}",
-          "refId": "A",
-          "format": "time_series"
+          "expr": "caption_bulk_queue_remaining",
+          "format": "time_series",
+          "legendFormat": "bulk images queued",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (mode) (caption_active_requests{mode=~\"$mode\"})",
+          "format": "time_series",
+          "legendFormat": "in-flight {{mode}}",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "caption_inference_waiting",
+          "format": "time_series",
+          "legendFormat": "waiting for model",
+          "refId": "C"
         }
       ],
+      "title": "Bulk queue and in-flight requests (count, linear)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "How much data users push into the app. Large ZIPs show up as tall orange spikes.",
       "fieldConfig": {
         "defaults": {
-          "unit": "Bps",
+          "color": {
+            "fixedColor": "#2a78d6",
+            "mode": "fixed"
+          },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "upload rate",
             "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "lineWidth": 2,
             "fillOpacity": 0,
-            "showPoints": "always",
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
             "pointSize": 4,
-            "spanNulls": true,
             "scaleDistribution": {
               "type": "linear"
             },
+            "showPoints": "always",
+            "spanNulls": true,
             "stacking": {
-              "mode": "none",
-              "group": "A"
+              "group": "A",
+              "mode": "none"
             },
-            "lineStyle": {
-              "fill": "solid"
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#2a78d6"
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
           },
-          "min": 0
+          "unit": "Bps"
         },
         "overrides": [
           {
@@ -1792,8 +2051,8 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#2a78d6"
+                  "fixedColor": "#2a78d6",
+                  "mode": "fixed"
                 }
               }
             ]
@@ -1807,107 +2066,128 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#eb6834"
+                  "fixedColor": "#eb6834",
+                  "mode": "fixed"
                 }
               },
               {
                 "id": "custom.lineStyle",
                 "value": {
-                  "fill": "dash",
                   "dash": [
                     10,
                     10
-                  ]
+                  ],
+                  "fill": "dash"
                 }
               }
             ]
           }
         ]
       },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 44
+      },
+      "id": 21,
       "options": {
         "legend": {
-          "showLegend": true,
-          "displayMode": "table",
-          "placement": "bottom",
           "calcs": [
             "mean",
             "max",
             "lastNotNull"
-          ]
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
-      }
-    },
-    {
-      "type": "timeseries",
-      "id": 22,
-      "title": "Caption length and image size (averages, linear)",
-      "description": "Average words per caption and average uploaded image size, from the caption_text_length_words and caption_image_megapixels histograms (_sum / _count). Checks the model output stays sensible.",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 52
-      },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "sum(rate(caption_text_length_words_sum[5m])) / sum(rate(caption_text_length_words_count[5m]))",
-          "legendFormat": "words per caption",
-          "refId": "A",
-          "format": "time_series"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "expr": "sum(rate(caption_image_megapixels_sum[5m])) / sum(rate(caption_image_megapixels_count[5m]))",
-          "legendFormat": "megapixels per image",
-          "refId": "B",
-          "format": "time_series"
+          "expr": "sum by (mode) (rate(caption_upload_bytes_total{mode=~\"$mode\"}[1m]))",
+          "format": "time_series",
+          "legendFormat": "{{mode}}",
+          "refId": "A"
         }
       ],
+      "title": "Upload volume, by mode (bytes per second, linear)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Average words per caption and average uploaded image size, from the caption_text_length_words and caption_image_megapixels histograms (_sum / _count). Checks the model output stays sensible.",
       "fieldConfig": {
         "defaults": {
-          "unit": "short",
+          "color": {
+            "fixedColor": "#2a78d6",
+            "mode": "fixed"
+          },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "words  |  megapixels",
             "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "lineWidth": 2,
             "fillOpacity": 0,
-            "showPoints": "always",
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
             "pointSize": 4,
-            "spanNulls": true,
             "scaleDistribution": {
               "type": "linear"
             },
+            "showPoints": "always",
+            "spanNulls": true,
             "stacking": {
-              "mode": "none",
-              "group": "A"
+              "group": "A",
+              "mode": "none"
             },
-            "lineStyle": {
-              "fill": "solid"
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#2a78d6"
-          },
+          "decimals": 1,
+          "mappings": [],
           "min": 0,
-          "decimals": 1
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
         },
         "overrides": [
           {
@@ -1919,8 +2199,8 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#2a78d6"
+                  "fixedColor": "#2a78d6",
+                  "mode": "fixed"
                 }
               }
             ]
@@ -1934,49 +2214,97 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#1baf7a"
+                  "fixedColor": "#1baf7a",
+                  "mode": "fixed"
                 }
               },
               {
                 "id": "custom.lineStyle",
                 "value": {
-                  "fill": "dash",
                   "dash": [
                     10,
                     10
-                  ]
+                  ],
+                  "fill": "dash"
                 }
               }
             ]
           }
         ]
       },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 52
+      },
+      "id": 22,
       "options": {
         "legend": {
-          "showLegend": true,
-          "displayMode": "table",
-          "placement": "bottom",
           "calcs": [
             "mean",
             "max",
             "lastNotNull"
-          ]
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
-      }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum(rate(caption_text_length_words_sum[5m])) / sum(rate(caption_text_length_words_count[5m]))",
+          "format": "time_series",
+          "legendFormat": "words per caption",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum(rate(caption_image_megapixels_sum[5m])) / sum(rate(caption_image_megapixels_count[5m]))",
+          "format": "time_series",
+          "legendFormat": "megapixels per image",
+          "refId": "B"
+        }
+      ],
+      "title": "Caption length and image size (averages, linear)",
+      "type": "timeseries"
     },
     {
-      "type": "stat",
-      "id": 23,
-      "title": "Images processed (total since start)",
-      "description": "Lifetime count of images captioned, split by mode.",
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
+      },
+      "description": "Lifetime count of images captioned, split by mode.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#2a78d6"
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 8,
@@ -1984,6 +2312,25 @@
         "x": 12,
         "y": 52
       },
+      "id": 23,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -1991,55 +2338,39 @@
             "uid": "${datasource}"
           },
           "expr": "sum by (mode) (caption_images_processed_total{status=\"success\"})",
-          "legendFormat": "",
-          "refId": "A",
           "format": "time_series",
           "instant": true,
-          "range": false
+          "legendFormat": "",
+          "range": false,
+          "refId": "A"
         }
       ],
+      "title": "Images processed (total since start)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "ZIP jobs by outcome: completed, completed_with_errors, rejected.",
       "fieldConfig": {
         "defaults": {
-          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "#2a78d6",
-                "value": null
+                "color": "#2a78d6"
               }
             ]
           },
-          "color": {
-            "mode": "thresholds"
-          }
+          "unit": "short"
         },
         "overrides": []
-      },
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "colorMode": "none",
-        "graphMode": "none",
-        "textMode": "value_and_name",
-        "justifyMode": "center",
-        "orientation": "auto"
-      }
-    },
-    {
-      "type": "stat",
-      "id": 24,
-      "title": "Bulk jobs (total since start)",
-      "description": "ZIP jobs by outcome: completed, completed_with_errors, rejected.",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
       },
       "gridPos": {
         "h": 8,
@@ -2047,40 +2378,13 @@
         "x": 18,
         "y": 52
       },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "expr": "sum by (outcome) (caption_bulk_jobs_total)",
-          "legendFormat": "",
-          "refId": "A",
-          "format": "time_series",
-          "instant": true,
-          "range": false
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "short",
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "#2a78d6",
-                "value": null
-              }
-            ]
-          },
-          "color": {
-            "mode": "thresholds"
-          }
-        },
-        "overrides": []
-      },
+      "id": 24,
       "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -2088,17 +2392,29 @@
           "fields": "",
           "values": false
         },
-        "colorMode": "none",
-        "graphMode": "none",
+        "showPercentChange": false,
         "textMode": "value_and_name",
-        "justifyMode": "center",
-        "orientation": "auto"
-      }
+        "wideLayout": true
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum by (outcome) (caption_bulk_jobs_total)",
+          "format": "time_series",
+          "instant": true,
+          "legendFormat": "",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Bulk jobs (total since start)",
+      "type": "stat"
     },
     {
-      "type": "row",
-      "id": 25,
-      "title": "5 · System (node_exporter): what does it cost the machine?",
       "collapsed": false,
       "gridPos": {
         "h": 1,
@@ -2106,73 +2422,74 @@
         "x": 0,
         "y": 60
       },
-      "panels": []
+      "id": 25,
+      "panels": [],
+      "title": "5 · System (node_exporter): what does it cost the machine?",
+      "type": "row"
     },
     {
-      "type": "timeseries",
-      "id": 26,
-      "title": "CPU usage: whole machine vs caption app (% of all cores, linear)",
-      "description": "Blue = total host CPU from node_exporter; orange = share used by the Streamlit app process. When a bulk job runs (shaded), both should rise together; the gap is everything else on the machine.",
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 61
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "expr": "100 * (1 - avg(rate(node_cpu_seconds_total{mode=\"idle\"}[1m])))",
-          "legendFormat": "host total",
-          "refId": "A",
-          "format": "time_series"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "expr": "100 * sum(rate(process_cpu_seconds_total{job=\"caption-app\"}[1m])) / scalar(count(count by (cpu) (node_cpu_seconds_total)))",
-          "legendFormat": "caption app",
-          "refId": "B",
-          "format": "time_series"
-        }
-      ],
+      "description": "Blue = total host CPU from node_exporter; orange = share used by the Streamlit app process. When a bulk job runs (shaded), both should rise together; the gap is everything else on the machine.",
       "fieldConfig": {
         "defaults": {
-          "unit": "percent",
+          "color": {
+            "fixedColor": "#2a78d6",
+            "mode": "fixed"
+          },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "% of all CPU cores",
             "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "lineWidth": 2,
             "fillOpacity": 0,
-            "showPoints": "always",
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
             "pointSize": 4,
-            "spanNulls": true,
             "scaleDistribution": {
               "type": "linear"
             },
+            "showPoints": "always",
+            "spanNulls": true,
             "stacking": {
-              "mode": "none",
-              "group": "A"
+              "group": "A",
+              "mode": "none"
             },
-            "lineStyle": {
-              "fill": "solid"
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#2a78d6"
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
           },
-          "min": 0
+          "unit": "percent"
         },
         "overrides": [
           {
@@ -2184,8 +2501,8 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#2a78d6"
+                  "fixedColor": "#2a78d6",
+                  "mode": "fixed"
                 }
               }
             ]
@@ -2199,106 +2516,137 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#eb6834"
+                  "fixedColor": "#eb6834",
+                  "mode": "fixed"
                 }
               },
               {
                 "id": "custom.lineStyle",
                 "value": {
-                  "fill": "dash",
                   "dash": [
                     10,
                     10
-                  ]
+                  ],
+                  "fill": "dash"
                 }
               }
             ]
           }
         ]
       },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 61
+      },
+      "id": 26,
       "options": {
         "legend": {
-          "showLegend": true,
-          "displayMode": "table",
-          "placement": "bottom",
           "calcs": [
             "mean",
             "max",
             "lastNotNull"
-          ]
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
-      }
-    },
-    {
-      "type": "timeseries",
-      "id": 27,
-      "title": "Memory: host used vs caption app RSS (bytes, linear)",
-      "description": "Host used = total minus available RAM. App RSS = memory held by the app (mostly the model). Bulk jobs should NOT make RSS grow steadily; if they do, something leaks.",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 61
-      },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes",
-          "legendFormat": "host used",
-          "refId": "A",
-          "format": "time_series"
+          "expr": "100 * (1 - avg(rate(node_cpu_seconds_total{mode=\"idle\"}[1m])))",
+          "format": "time_series",
+          "legendFormat": "host total",
+          "refId": "A"
         },
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "process_resident_memory_bytes{job=\"caption-app\"}",
-          "legendFormat": "caption app RSS",
-          "refId": "B",
-          "format": "time_series"
+          "expr": "100 * sum(rate(process_cpu_seconds_total{job=\"caption-app\"}[1m])) / scalar(count(count by (cpu) (node_cpu_seconds_total)))",
+          "format": "time_series",
+          "legendFormat": "caption app",
+          "refId": "B"
         }
       ],
+      "title": "CPU usage: whole machine vs caption app (% of all cores, linear)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Host used = total minus available RAM. App RSS = memory held by the app (mostly the model). Bulk jobs should NOT make RSS grow steadily; if they do, something leaks.",
       "fieldConfig": {
         "defaults": {
-          "unit": "bytes",
+          "color": {
+            "fixedColor": "#2a78d6",
+            "mode": "fixed"
+          },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "memory",
             "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "lineWidth": 2,
             "fillOpacity": 0,
-            "showPoints": "always",
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
             "pointSize": 4,
-            "spanNulls": true,
             "scaleDistribution": {
               "type": "linear"
             },
+            "showPoints": "always",
+            "spanNulls": true,
             "stacking": {
-              "mode": "none",
-              "group": "A"
+              "group": "A",
+              "mode": "none"
             },
-            "lineStyle": {
-              "fill": "solid"
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#2a78d6"
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
           },
-          "min": 0
+          "unit": "bytes"
         },
         "overrides": [
           {
@@ -2310,8 +2658,8 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#2a78d6"
+                  "fixedColor": "#2a78d6",
+                  "mode": "fixed"
                 }
               }
             ]
@@ -2325,116 +2673,137 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#eb6834"
+                  "fixedColor": "#eb6834",
+                  "mode": "fixed"
                 }
               },
               {
                 "id": "custom.lineStyle",
                 "value": {
-                  "fill": "dash",
                   "dash": [
                     10,
                     10
-                  ]
+                  ],
+                  "fill": "dash"
                 }
               }
             ]
           }
         ]
       },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 61
+      },
+      "id": 27,
       "options": {
         "legend": {
-          "showLegend": true,
-          "displayMode": "table",
-          "placement": "bottom",
           "calcs": [
             "mean",
             "max",
             "lastNotNull"
-          ]
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
-      }
-    },
-    {
-      "type": "timeseries",
-      "id": 28,
-      "title": "Load average, 1 / 5 / 15 min (runnable tasks, linear)",
-      "description": "Average number of tasks wanting CPU. Above the core count means the machine is overloaded.",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
       },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 69
-      },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "node_load1",
-          "legendFormat": "1 min",
-          "refId": "A",
-          "format": "time_series"
+          "expr": "node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes",
+          "format": "time_series",
+          "legendFormat": "host used",
+          "refId": "A"
         },
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "node_load5",
-          "legendFormat": "5 min",
-          "refId": "B",
-          "format": "time_series"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "expr": "node_load15",
-          "legendFormat": "15 min",
-          "refId": "C",
-          "format": "time_series"
+          "expr": "process_resident_memory_bytes{job=\"caption-app\"}",
+          "format": "time_series",
+          "legendFormat": "caption app RSS",
+          "refId": "B"
         }
       ],
+      "title": "Memory: host used vs caption app RSS (bytes, linear)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Average number of tasks wanting CPU. Above the core count means the machine is overloaded.",
       "fieldConfig": {
         "defaults": {
-          "unit": "short",
+          "color": {
+            "fixedColor": "#2a78d6",
+            "mode": "fixed"
+          },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "tasks",
             "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "lineWidth": 2,
             "fillOpacity": 0,
-            "showPoints": "always",
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
             "pointSize": 4,
-            "spanNulls": true,
             "scaleDistribution": {
               "type": "linear"
             },
+            "showPoints": "always",
+            "spanNulls": true,
             "stacking": {
-              "mode": "none",
-              "group": "A"
+              "group": "A",
+              "mode": "none"
             },
-            "lineStyle": {
-              "fill": "solid"
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#2a78d6"
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
           },
-          "min": 0
+          "unit": "short"
         },
         "overrides": [
           {
@@ -2446,8 +2815,8 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#2a78d6"
+                  "fixedColor": "#2a78d6",
+                  "mode": "fixed"
                 }
               }
             ]
@@ -2461,18 +2830,18 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#eb6834"
+                  "fixedColor": "#eb6834",
+                  "mode": "fixed"
                 }
               },
               {
                 "id": "custom.lineStyle",
                 "value": {
-                  "fill": "dash",
                   "dash": [
                     10,
                     10
-                  ]
+                  ],
+                  "fill": "dash"
                 }
               }
             ]
@@ -2486,106 +2855,147 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#1baf7a"
+                  "fixedColor": "#1baf7a",
+                  "mode": "fixed"
                 }
               },
               {
                 "id": "custom.lineStyle",
                 "value": {
-                  "fill": "dash",
                   "dash": [
                     2,
                     6
-                  ]
+                  ],
+                  "fill": "dash"
                 }
               }
             ]
           }
         ]
       },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 69
+      },
+      "id": 28,
       "options": {
         "legend": {
-          "showLegend": true,
-          "displayMode": "table",
-          "placement": "bottom",
           "calcs": [
             "mean",
             "max",
             "lastNotNull"
-          ]
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
-      }
-    },
-    {
-      "type": "timeseries",
-      "id": 29,
-      "title": "Disk throughput, read vs write (bytes per second, linear)",
-      "description": "Disk I/O from node_exporter. Model loading and ZIP extraction cause short read bursts.",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
       },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 69
-      },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "sum(rate(node_disk_read_bytes_total[1m]))",
-          "legendFormat": "read",
-          "refId": "A",
-          "format": "time_series"
+          "expr": "node_load1",
+          "format": "time_series",
+          "legendFormat": "1 min",
+          "refId": "A"
         },
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "sum(rate(node_disk_written_bytes_total[1m]))",
-          "legendFormat": "write",
-          "refId": "B",
-          "format": "time_series"
+          "expr": "node_load5",
+          "format": "time_series",
+          "legendFormat": "5 min",
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "node_load15",
+          "format": "time_series",
+          "legendFormat": "15 min",
+          "refId": "C"
         }
       ],
+      "title": "Load average, 1 / 5 / 15 min (runnable tasks, linear)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Disk I/O from node_exporter. Model loading and ZIP extraction cause short read bursts.",
       "fieldConfig": {
         "defaults": {
-          "unit": "Bps",
+          "color": {
+            "fixedColor": "#2a78d6",
+            "mode": "fixed"
+          },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "disk throughput",
             "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "lineWidth": 2,
             "fillOpacity": 0,
-            "showPoints": "always",
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
             "pointSize": 4,
-            "spanNulls": true,
             "scaleDistribution": {
               "type": "linear"
             },
+            "showPoints": "always",
+            "spanNulls": true,
             "stacking": {
-              "mode": "none",
-              "group": "A"
+              "group": "A",
+              "mode": "none"
             },
-            "lineStyle": {
-              "fill": "solid"
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#2a78d6"
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
           },
-          "min": 0
+          "unit": "Bps"
         },
         "overrides": [
           {
@@ -2597,8 +3007,8 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#2a78d6"
+                  "fixedColor": "#2a78d6",
+                  "mode": "fixed"
                 }
               }
             ]
@@ -2612,106 +3022,137 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#eb6834"
+                  "fixedColor": "#eb6834",
+                  "mode": "fixed"
                 }
               },
               {
                 "id": "custom.lineStyle",
                 "value": {
-                  "fill": "dash",
                   "dash": [
                     10,
                     10
-                  ]
+                  ],
+                  "fill": "dash"
                 }
               }
             ]
           }
         ]
       },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 69
+      },
+      "id": 29,
       "options": {
         "legend": {
-          "showLegend": true,
-          "displayMode": "table",
-          "placement": "bottom",
           "calcs": [
             "mean",
             "max",
             "lastNotNull"
-          ]
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
-      }
-    },
-    {
-      "type": "timeseries",
-      "id": 30,
-      "title": "Network traffic, receive vs transmit (bytes per second, linear)",
-      "description": "Host network excluding loopback. Uploads from other devices on the network appear as receive spikes.",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
       },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 69
-      },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "sum(rate(node_network_receive_bytes_total{device!=\"lo\"}[1m]))",
-          "legendFormat": "receive",
-          "refId": "A",
-          "format": "time_series"
+          "expr": "sum(rate(node_disk_read_bytes_total[1m]))",
+          "format": "time_series",
+          "legendFormat": "read",
+          "refId": "A"
         },
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "sum(rate(node_network_transmit_bytes_total{device!=\"lo\"}[1m]))",
-          "legendFormat": "transmit",
-          "refId": "B",
-          "format": "time_series"
+          "expr": "sum(rate(node_disk_written_bytes_total[1m]))",
+          "format": "time_series",
+          "legendFormat": "write",
+          "refId": "B"
         }
       ],
+      "title": "Disk throughput, read vs write (bytes per second, linear)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Host network excluding loopback. Uploads from other devices on the network appear as receive spikes.",
       "fieldConfig": {
         "defaults": {
-          "unit": "Bps",
+          "color": {
+            "fixedColor": "#2a78d6",
+            "mode": "fixed"
+          },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "network throughput",
             "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "lineWidth": 2,
             "fillOpacity": 0,
-            "showPoints": "always",
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
             "pointSize": 4,
-            "spanNulls": true,
             "scaleDistribution": {
               "type": "linear"
             },
+            "showPoints": "always",
+            "spanNulls": true,
             "stacking": {
-              "mode": "none",
-              "group": "A"
+              "group": "A",
+              "mode": "none"
             },
-            "lineStyle": {
-              "fill": "solid"
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#2a78d6"
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
           },
-          "min": 0
+          "unit": "Bps"
         },
         "overrides": [
           {
@@ -2723,8 +3164,8 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#2a78d6"
+                  "fixedColor": "#2a78d6",
+                  "mode": "fixed"
                 }
               }
             ]
@@ -2738,82 +3179,91 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#eb6834"
+                  "fixedColor": "#eb6834",
+                  "mode": "fixed"
                 }
               },
               {
                 "id": "custom.lineStyle",
                 "value": {
-                  "fill": "dash",
                   "dash": [
                     10,
                     10
-                  ]
+                  ],
+                  "fill": "dash"
                 }
               }
             ]
           }
         ]
       },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 69
+      },
+      "id": 30,
       "options": {
         "legend": {
-          "showLegend": true,
-          "displayMode": "table",
-          "placement": "bottom",
           "calcs": [
             "mean",
             "max",
             "lastNotNull"
-          ]
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
-      }
-    },
-    {
-      "type": "gauge",
-      "id": 31,
-      "title": "Root disk used (%)",
-      "description": "How full the main disk is. Orange above 80 %, red above 90 %.",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
       },
-      "gridPos": {
-        "h": 6,
-        "w": 8,
-        "x": 0,
-        "y": 77
-      },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "100 * (1 - max(node_filesystem_avail_bytes{mountpoint=\"/\"}) / max(node_filesystem_size_bytes{mountpoint=\"/\"}))",
-          "legendFormat": "root /",
-          "refId": "A",
+          "expr": "sum(rate(node_network_receive_bytes_total{device!=\"lo\"}[1m]))",
           "format": "time_series",
-          "instant": true,
-          "range": false
+          "legendFormat": "receive",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum(rate(node_network_transmit_bytes_total{device!=\"lo\"}[1m]))",
+          "format": "time_series",
+          "legendFormat": "transmit",
+          "refId": "B"
         }
       ],
+      "title": "Network traffic, receive vs transmit (bytes per second, linear)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "How full the main disk is. Orange above 80 %, red above 90 %.",
       "fieldConfig": {
         "defaults": {
-          "unit": "percent",
-          "min": 0,
-          "max": 100,
           "decimals": 1,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "#2a78d6",
-                "value": null
+                "color": "#2a78d6"
               },
               {
                 "color": "#eb6834",
@@ -2824,86 +3274,114 @@
                 "value": 90
               }
             ]
-          }
+          },
+          "unit": "percent"
         },
         "overrides": []
       },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 77
+      },
+      "id": 31,
       "options": {
-        "showThresholdMarkers": true,
-        "showThresholdLabels": true,
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
           ],
+          "fields": "",
           "values": false
-        }
-      }
-    },
-    {
-      "type": "timeseries",
-      "id": 32,
-      "title": "Caption app threads and open files (count, linear)",
-      "description": "Python process internals from prometheus_client's process collector. Steady values = no leaks.",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
+        },
+        "showThresholdLabels": true,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
       },
-      "gridPos": {
-        "h": 6,
-        "w": 16,
-        "x": 8,
-        "y": 77
-      },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "process_open_fds{job=\"caption-app\"}",
-          "legendFormat": "open files",
-          "refId": "A",
-          "format": "time_series"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "expr": "sum(python_gc_objects_collected_total{job=\"caption-app\"})",
-          "legendFormat": "GC objects collected",
-          "refId": "B",
-          "format": "time_series"
+          "expr": "100 * (1 - max(node_filesystem_avail_bytes{mountpoint=\"/\"}) / max(node_filesystem_size_bytes{mountpoint=\"/\"}))",
+          "format": "time_series",
+          "instant": true,
+          "legendFormat": "root /",
+          "range": false,
+          "refId": "A"
         }
       ],
+      "title": "Root disk used (%)",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Python process internals from prometheus_client's process collector. Steady values = no leaks.",
       "fieldConfig": {
         "defaults": {
-          "unit": "short",
+          "color": {
+            "fixedColor": "#2a78d6",
+            "mode": "fixed"
+          },
           "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "count",
             "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "lineWidth": 2,
             "fillOpacity": 0,
-            "showPoints": "always",
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
             "pointSize": 4,
-            "spanNulls": true,
             "scaleDistribution": {
               "type": "linear"
             },
+            "showPoints": "always",
+            "spanNulls": true,
             "stacking": {
-              "mode": "none",
-              "group": "A"
+              "group": "A",
+              "mode": "none"
             },
-            "lineStyle": {
-              "fill": "solid"
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
-          "color": {
-            "mode": "fixed",
-            "fixedColor": "#2a78d6"
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
           },
-          "min": 0
+          "unit": "short"
         },
         "overrides": [
           {
@@ -2915,8 +3393,8 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#2a78d6"
+                  "fixedColor": "#2a78d6",
+                  "mode": "fixed"
                 }
               }
             ]
@@ -2930,40 +3408,140 @@
               {
                 "id": "color",
                 "value": {
-                  "mode": "fixed",
-                  "fixedColor": "#eb6834"
+                  "fixedColor": "#eb6834",
+                  "mode": "fixed"
                 }
               },
               {
                 "id": "custom.lineStyle",
                 "value": {
-                  "fill": "dash",
                   "dash": [
                     10,
                     10
-                  ]
+                  ],
+                  "fill": "dash"
                 }
               }
             ]
           }
         ]
       },
+      "gridPos": {
+        "h": 6,
+        "w": 16,
+        "x": 8,
+        "y": 77
+      },
+      "id": 32,
       "options": {
         "legend": {
-          "showLegend": true,
-          "displayMode": "table",
-          "placement": "bottom",
           "calcs": [
             "mean",
             "max",
             "lastNotNull"
-          ]
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "desc"
         }
-      }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "process_open_fds{job=\"caption-app\"}",
+          "format": "time_series",
+          "legendFormat": "open files",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "expr": "sum(python_gc_objects_collected_total{job=\"caption-app\"})",
+          "format": "time_series",
+          "legendFormat": "GC objects collected",
+          "refId": "B"
+        }
+      ],
+      "title": "Caption app threads and open files (count, linear)",
+      "type": "timeseries"
     }
-  ]
+  ],
+  "preload": false,
+  "refresh": "5s",
+  "schemaVersion": 41,
+  "tags": [
+    "A4",
+    "streamlit",
+    "prometheus",
+    "node_exporter"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "Prometheus",
+          "value": "prometheus"
+        },
+        "label": "Data source",
+        "name": "datasource",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "type": "datasource"
+      },
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "$__all",
+          "value": "$__all"
+        },
+        "includeAll": true,
+        "label": "Mode",
+        "multi": true,
+        "name": "mode",
+        "options": [
+          {
+            "selected": false,
+            "text": "single",
+            "value": "single"
+          },
+          {
+            "selected": false,
+            "text": "bulk",
+            "value": "bulk"
+          }
+        ],
+        "query": "single,bulk",
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m"
+    ]
+  },
+  "timezone": "browser",
+  "title": "CPU Image Captioning: Service Health to Hardware",
+  "uid": "caption-a4",
+  "version": 1
 }
